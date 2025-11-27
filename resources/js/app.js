@@ -1,5 +1,6 @@
 import '../css/app.css';
 import './bootstrap';
+import './ziggy';
 
 import { createInertiaApp } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
@@ -16,10 +17,17 @@ createInertiaApp({
             import.meta.glob('./Pages/**/*.vue'),
         ),
     setup({ el, App, props, plugin }) {
+        const ziggy = props.initialPage.props.ziggy || {};
+        
+        // Update Ziggy data for global route helper
+        if (window.updateZiggy) {
+            window.updateZiggy(ziggy);
+        }
+        
         return createApp({ render: () => h(App, props) })
             .use(plugin)
             .use(ZiggyVue, {
-                ...props.initialPage.props.ziggy,
+                ...ziggy,
                 location: new URL(props.initialPage.url, window.location.origin),
             })
             .mount(el);
